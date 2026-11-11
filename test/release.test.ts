@@ -13,6 +13,19 @@ import {
 const version = '0.1.0-alpha.1';
 
 describe('production release contract', () => {
+  it('runs validation on pull requests without entering the release build matrix', async () => {
+    const workflow = await readFile(
+      path.resolve(import.meta.dirname, '..', '.github', 'workflows', 'release.yml'),
+      'utf8'
+    );
+
+    assert.match(workflow, /pull_request:/);
+    assert.match(
+      workflow,
+      /build:\n\s+if: github\.event_name != 'pull_request'\n\s+needs: test/
+    );
+  });
+
   it('uses Generator publisher secrets and asset names in the build matrix', async () => {
     const workflow = await readFile(
       path.resolve(import.meta.dirname, '..', '.github', 'workflows', 'release.yml'),

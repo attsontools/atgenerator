@@ -1,6 +1,7 @@
 name: Release
 
 on:
+  pull_request:
   push:
     tags:
       - 'v*'
@@ -25,6 +26,7 @@ jobs:
       - run: pnpm build:plugin
 
   build:
+    if: github.event_name != 'pull_request'
     needs: test
     strategy:
       fail-fast: false
