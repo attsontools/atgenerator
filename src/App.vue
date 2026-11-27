@@ -264,8 +264,8 @@ function clampInteger(value: number, min: number, max: number) {
 </script>
 
 <template>
-  <main class="app-shell">
-    <header class="topbar">
+  <main class="app-shell" :class="{ 'is-plugin': host.mode === 'plugin' }">
+    <header v-if="host.mode === 'standalone'" class="topbar">
       <div class="brand">
         <span class="brand-mark">G</span>
         <div class="brand-copy">
@@ -275,9 +275,8 @@ function clampInteger(value: number, min: number, max: number) {
       </div>
       <div class="top-actions">
         <span v-if="feedback" class="feedback" :class="`is-${feedbackKind}`">{{ feedback }}</span>
-        <span class="host-badge">{{ host.mode === 'plugin' ? '平台插件' : '独立应用' }}</span>
+        <span class="host-badge">独立应用</span>
         <button
-          v-if="host.mode === 'standalone'"
           class="icon-button"
           type="button"
           :title="theme === 'dark' ? '切换到浅色' : '切换到深色'"
@@ -298,13 +297,21 @@ function clampInteger(value: number, min: number, max: number) {
 
     <template v-else>
       <nav class="tabs" aria-label="生成器">
-        <button
-          v-for="tab in tabs"
-          :key="tab.id"
-          type="button"
-          :class="{ active: active === tab.id }"
-          @click="active = tab.id"
-        >{{ tab.label }}</button>
+        <div class="tab-list">
+          <button
+            v-for="tab in tabs"
+            :key="tab.id"
+            type="button"
+            :class="{ active: active === tab.id }"
+            @click="active = tab.id"
+          >{{ tab.label }}</button>
+        </div>
+        <span
+          v-if="host.mode === 'plugin'"
+          class="feedback tabs-status"
+          :class="{ 'is-visible': Boolean(feedback), [`is-${feedbackKind}`]: true }"
+          aria-live="polite"
+        >{{ feedback || '操作完成' }}</span>
       </nav>
 
       <section class="workspace">
